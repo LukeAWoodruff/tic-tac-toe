@@ -1,4 +1,4 @@
-function Square() {
+function Square({value}) {
     return <button className="square">1</button>;
   }
 
@@ -6,21 +6,21 @@ export default function Board(){
    return(
     <> 
     <div className = "board-row">
-     <square/>
-     <square/>
-     <square/>
+     <Square/>
+     <Square/>
+     <Squarequare/>
      </div>
 
      <div className = "board-row">
-     <square/>
-     <square/>
-     <square/>
+     <Square/>
+     <Square/>
+     <Square/>
      </div>
 
     <div className = "board-row">
-    <square/>
-    <square/>
-    <square/>
+    <Square/>
+    <Square/>
+    <Square/>
      </div>
 </>
    );
