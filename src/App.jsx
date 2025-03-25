@@ -22,7 +22,7 @@ function Board({gridSize, xIsNext, squares, onPlay }) {
     onPlay(nextSquares);
   }
 
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(squares, gridSize);
   let status;
   if (winner) {
     status = 'Winner: ' + winner;
@@ -56,7 +56,8 @@ function Board({gridSize, xIsNext, squares, onPlay }) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [gridSize, setGridSize] = useState(3); // Default to 3x3
+  const [history, setHistory] = useState([Array(3 * 3).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
@@ -71,13 +72,18 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+  function handleGridSizeChange(e) {
+    const newSize = Number(e.target.value);
+    setGridSize(newSize);
+    setHistory([Array(newSize * newSize).fill(null)]);
+    setCurrentMove(0);
+}
+
+
   const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
+    const description = move
+      ? "Go to move #" + move
+      : "Go to game start";
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
@@ -88,30 +94,71 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          gridSize={gridSize}
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+        />
       </div>
       <div className="game-info">
+        <label>
+          Grid Size:
+          <input
+            type="number"
+            min="3"
+            max="10"
+            value={gridSize}
+            onChange={handleGridSizeChange}
+          />
+        </label>
         <ol>{moves}</ol>
       </div>
     </div>
   );
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+function calculateWinner(squares, gridSize) {
+  const lines = [];
+
+  // Generate winning lines for rows
+  for (let row = 0; row < gridSize; row++) {
+    lines.push(
+      Array(gridSize)
+        .fill(null)
+        .map((_, col) => row * gridSize + col)
+    );
+  }
+
+  // Generate winning lines for columns
+  for (let col = 0; col < gridSize; col++) {
+    lines.push(
+      Array(gridSize)
+        .fill(null)
+        .map((_, row) => row * gridSize + col)
+    );
+  }
+
+  // Generate winning lines for diagonals
+  lines.push(
+    Array(gridSize)
+      .fill(null)
+      .map((_, i) => i * gridSize + i)
+  );
+  lines.push(
+    Array(gridSize)
+      .fill(null)
+      .map((_, i) => i * gridSize + (gridSize - i - 1))
+  );
+
+  // Check for a winner
+  for (const line of lines) {
+    const [first, ...rest] = line;
+    if (
+      squares[first] &&
+      rest.every((index) => squares[index] === squares[first])
+    ) {
+      return squares[first];
     }
   }
   return null;
