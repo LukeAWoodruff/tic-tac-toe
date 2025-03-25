@@ -8,9 +8,9 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({gridSize, xIsNext, squares, onPlay }) {
   function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares, gridSize) || squares[i]) {
       return;
     }
     const nextSquares = squares.slice();
@@ -29,6 +29,23 @@ function Board({ xIsNext, squares, onPlay }) {
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
+  const rows = Array(gridSize)
+  .fill(null)
+  .map((_, row) => (
+    <div className="board-row" key={row}>
+      {Array(gridSize)
+        .fill(null)
+        .map((_, col) => {
+          const index = row * gridSize + col;
+          return (
+            <Square
+              key={index}
+              value={squares[index]}
+              onSquareClick={() => handleClick(index)}
+            />
+          );
+        })}
+    </div>
 
   return (
     <>
