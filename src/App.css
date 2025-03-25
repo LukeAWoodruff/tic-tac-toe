@@ -1,0 +1,11 @@
+@media (max-width: 600px) {
+  .square {
+      width: 80px; /* Slightly smaller for responsiveness */
+      height: 80px;
+      font-size: 20px;
+  }
+
+  .game-board {
+      width: auto; /* Adjust to keep it flexible but not shrink too much */
+  }
+}
