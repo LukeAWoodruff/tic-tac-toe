@@ -57,7 +57,7 @@ function Board({gridSize, xIsNext, squares, onPlay }) {
 
 export default function Game() {
   const [gridSize, setGridSize] = useState(3); // Default to 3x3
-  const [history, setHistory] = useState([Array(3 * 3).fill(null)]);
+  const [history, setHistory] = useState([Array(gridSize * gridSize).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
